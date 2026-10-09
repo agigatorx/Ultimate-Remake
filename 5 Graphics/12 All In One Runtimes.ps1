@@ -8,31 +8,20 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-        # SCRIPT CHECK INTERNET
-        if (!(Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction SilentlyContinue)) {
-        Write-Host "Internet Connection Required`n" -ForegroundColor Red
+        # local files folder
+        $source = "$PSScriptRoot\..\0 Embedded Files"
+
+        # check embedded files
+        if (!(Test-Path "$source\vcredist2005_x86.exe")) {
+        Write-Host "Embedded Files Not Found: $source`n" -ForegroundColor Red
         Pause
         exit
         }
 
-        # SCRIPT SILENT
-        $progresspreference = 'silentlycontinue'
+Write-Host "Copying: C++..."
 
-Write-Host "Downloading: C++..."
-
-# download c++
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2005_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2005_x86.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2005_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2005_x64.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2008_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2008_x86.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2008_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2008_x64.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2010_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2010_x86.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2010_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2010_x64.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2012_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2012_x86.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2012_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2012_x64.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2013_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2013_x86.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2013_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2013_x64.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2015_2017_2019_2022_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2015_2017_2019_2022_x86.exe"
-IWR "https://github.com/FR33THYFR33THY/Ultimate/releases/download/Files/vcredist2015_2017_2019_2022_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2015_2017_2019_2022_x64.exe"
+# copy local c++ installers
+Copy-Item "$source\vcredist*.exe" -Destination "$env:SystemRoot\Temp" -Force
 
 Clear-Host
 Write-Host "Installing: C++..."
