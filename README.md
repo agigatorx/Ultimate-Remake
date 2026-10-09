@@ -1,2 +1,4 @@
 # Ultimate-Remake
-A Powerful Windows Optimizer Remake.
+A Powerful Windows Optimizer. Thanks for original for FR33THYFR33THY
+Original Link: https://github.com/FR33THYFR33THY/Ultimate
+Its not stealed, just remake!
