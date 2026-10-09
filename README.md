@@ -7,4 +7,8 @@ Its not stealed, just remake!
 **This version cretad new, some features may not work!**
 
 **Update Logs:**
+
+
+
+
 **Added TwoClickPs1.cmd <- It's does: Changes .ps1 files open with powershell**
