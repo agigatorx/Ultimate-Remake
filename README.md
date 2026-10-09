@@ -13,5 +13,5 @@ Its not stealed, just remake!
 
 **Added TwoClickPs1.cmd <- Sets .ps1 files to open and run with Windows PowerShell instead of Notepad**
 
-
+**Changed Installers.ps1**
 
