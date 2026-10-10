@@ -26,5 +26,11 @@ Remove-Item "$env:SystemDrive\inetpub" -Recurse -Force -ErrorAction SilentlyCont
 cmd /c "sc stop `"wuauserv`" >nul 2>&1"
 Remove-Item "$env:SystemDrive\Windows\SoftwareDistribution\*" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
 
-# open disk cleanup
-Start-Process cleanmgr.exe
+# set every disk cleanup handler on for profile 1 (value 2 = on)
+$volumeCaches = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches"
+Get-ChildItem $volumeCaches -ErrorAction SilentlyContinue | ForEach-Object {
+New-ItemProperty -Path $_.PSPath -Name "StateFlags0001" -Value 2 -PropertyType DWord -Force | Out-Null
+}
+
+# run disk cleanup with profile 1, no clicks needed
+Start-Process cleanmgr.exe -ArgumentList "/sagerun:1" -Wait
