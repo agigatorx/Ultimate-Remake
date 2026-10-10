@@ -27,10 +27,10 @@
 cls
 call :removeuserchoice
 :: open ps1 files with windows powershell on double click
-reg add "HKCR\Microsoft.PowerShellScript.1\shell\open\command" /ve /t REG_SZ /d "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -ExecutionPolicy unrestricted -File \"%%1\"" /f >nul 2>&1
+reg add "HKCR\Microsoft.PowerShellScript.1\shell\open\command" /ve /t REG_SZ /d "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -ExecutionPolicy Bypass -File \"%%1\"" /f >nul 2>&1
 :: allow powershell scripts
-reg add "HKCU\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" /v "ExecutionPolicy" /t REG_SZ /d "Unrestricted" /f >nul 2>&1
-reg add "HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" /v "ExecutionPolicy" /t REG_SZ /d "Unrestricted" /f >nul 2>&1
+reg add "HKCU\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" /v "ExecutionPolicy" /t REG_SZ /d "Bypass" /f >nul 2>&1
+reg add "HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell" /v "ExecutionPolicy" /t REG_SZ /d "Bypass" /f >nul 2>&1
 :: unblock all files in current directory
 cd /d "%~dp0"
 powershell -Command "Get-ChildItem -Path . -Recurse | Unblock-File"
@@ -43,7 +43,7 @@ exit
 cls
 call :removeuserchoice
 :: open ps1 files with windows powershell on double click
-reg add "HKCR\Microsoft.PowerShellScript.1\shell\open\command" /ve /t REG_SZ /d "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -ExecutionPolicy unrestricted -File \"%%1\"" /f >nul 2>&1
+reg add "HKCR\Microsoft.PowerShellScript.1\shell\open\command" /ve /t REG_SZ /d "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -ExecutionPolicy Bypass -File \"%%1\"" /f >nul 2>&1
 echo PS1 Files Now Open With Windows PowerShell
 pause
 exit
