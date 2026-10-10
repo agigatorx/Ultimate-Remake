@@ -32,12 +32,13 @@
 		Write-Host " 9. League Of Legends (EU & Manuel Setup)"
 		Write-Host " 10. Valorant (EU & Manuel Setup)"
 		Write-Host " 11. Notepad++"
-		Write-Host " 12. Exit`n"
+		Write-Host " 12. HxD (Manuel Setup)"
+		Write-Host " 13. Exit`n"
 	                  }
 	    show-menu
         while ($true) {
         $choice = Read-Host " "
-        if ($choice -match '^(1[12]|[1-9])$') {
+        if ($choice -match '^(1[123]|[1-9])$') {
 
         switch ($choice) {
         1 {
@@ -536,7 +537,66 @@ show-menu
 
 Clear-Host
 
+Write-Host "Downloading: HxD..."
+
+# paths
+$hxdUrl = "https://mh-nexus.de/downloads/HxDSetup.zip"
+$hxdZip = "$env:TEMP\HxDSetup.zip"
+$hxdExe = "$env:TEMP\HxDSetup.exe"
+
+# remove leftovers
+Remove-Item "$hxdZip","$hxdExe" -Force -ErrorAction SilentlyContinue
+
+# download hxd zip to %temp% with curl (cloudflare blocks powershell iwr)
+$download = $false
+if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
+curl.exe --progress-bar -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" -o "$hxdZip" "$hxdUrl"
+if ($LASTEXITCODE -eq 0) { $download = $true }
+}
+
+# check download
+if ($download -and (Test-Path "$hxdZip")) {
+
+# extract the zip to %temp%
+Expand-Archive -Path "$hxdZip" -DestinationPath "$env:TEMP" -Force -ErrorAction SilentlyContinue
+
+}
+
+# check extracted exe
+if (Test-Path "$hxdExe") {
+
+# run hxd installer silently (Inno Setup)
+$install = Start-Process "$hxdExe" -ArgumentList "/silent /SUPPRESSMSGBOXES" -Wait -PassThru
+
+if ($install.ExitCode -eq 0) {
+
+Write-Host "HxD Installed" -ForegroundColor Green
+
+} else {
+
+Write-Host "Setup Failed (Exit Code: $($install.ExitCode))" -ForegroundColor Red
+
+}
+
+} else {
+
+Write-Host "Download Failed (curl.exe missing or link blocked)`n" -ForegroundColor Red
+
+}
+
+# remove zip and exe
+Remove-Item "$hxdZip","$hxdExe" -Force -ErrorAction SilentlyContinue
+
+Pause
+
+show-menu
+
+          }
+        13 {
+
+Clear-Host
+
 exit
 
           }
-        } } else { Write-Host "Invalid input. Please select a valid option (1-12)." } }
+        } } else { Write-Host "Invalid input. Please select a valid option (1-13)." } }
