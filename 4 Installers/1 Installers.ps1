@@ -25,18 +25,19 @@
 		Write-Host " 2. OpenCode"
 		Write-Host " 3. WinRAR"
 		Write-Host " 4. Steam"
-		Write-Host " 5. Visual Studio 2019"
-		Write-Host " 6. Visual Studio 2022"
+		Write-Host " 5. Visual Studio 2019 (Manuel Setup)"
+		Write-Host " 6. Visual Studio 2022 (Manuel Setup)"
 		Write-Host " 7. 7-Zip"
 		Write-Host " 8. VS Code"
 		Write-Host " 9. League Of Legends (EU & Manuel Setup)"
 		Write-Host " 10. Valorant (EU & Manuel Setup)"
-		Write-Host " 11. Exit`n"
+		Write-Host " 11. Notepad++"
+		Write-Host " 12. Exit`n"
 	                  }
 	    show-menu
         while ($true) {
         $choice = Read-Host " "
-        if ($choice -match '^(1[01]|[1-9])$') {
+        if ($choice -match '^(1[12]|[1-9])$') {
 
         switch ($choice) {
         1 {
@@ -254,24 +255,11 @@ if ($LASTEXITCODE -eq 0) { $download = $true }
 # check download
 if ($download -and (Test-Path "$vs19Exe")) {
 
-Write-Host "Installing: Visual Studio 2019 (this can take a while)..."
+# run vs2019 bootstrapper as admin (no silent support)
+Start-Process "$vs19Exe" -Verb RunAs
 
-# run vs2019 bootstrapper silently (--quiet, no /s support)
-$install = Start-Process "$vs19Exe" -ArgumentList "--quiet --norestart" -Wait -PassThru
-
-if ($install.ExitCode -eq 0) {
-
-Write-Host "Visual Studio 2019 Installed" -ForegroundColor Green
-
-} elseif ($install.ExitCode -eq 3010) {
-
-Write-Host "Visual Studio 2019 Installed (Restart Required)" -ForegroundColor Yellow
-
-} else {
-
-Write-Host "Setup Failed (Exit Code: $($install.ExitCode))" -ForegroundColor Red
-
-}
+# manual setup notice
+Write-Host "Manuel Setup Required" -ForegroundColor Yellow
 
 } else {
 
@@ -307,24 +295,11 @@ if ($LASTEXITCODE -eq 0) { $download = $true }
 # check download
 if ($download -and (Test-Path "$vs22Exe")) {
 
-Write-Host "Installing: Visual Studio 2022 (this can take a while)..."
+# run vs2022 bootstrapper as admin (no silent support)
+Start-Process "$vs22Exe" -Verb RunAs
 
-# run vs2022 bootstrapper silently (--quiet, no /s support)
-$install = Start-Process "$vs22Exe" -ArgumentList "--quiet --norestart" -Wait -PassThru
-
-if ($install.ExitCode -eq 0) {
-
-Write-Host "Visual Studio 2022 Installed" -ForegroundColor Green
-
-} elseif ($install.ExitCode -eq 3010) {
-
-Write-Host "Visual Studio 2022 Installed (Restart Required)" -ForegroundColor Yellow
-
-} else {
-
-Write-Host "Setup Failed (Exit Code: $($install.ExitCode))" -ForegroundColor Red
-
-}
+# manual setup notice
+Write-Host "Manuel Setup Required" -ForegroundColor Yellow
 
 } else {
 
@@ -407,8 +382,8 @@ if ($LASTEXITCODE -eq 0) { $download = $true }
 # check download
 if ($download -and (Test-Path "$vscodeExe")) {
 
-# run vscode installer silently (NSIS /S)
-$install = Start-Process "$vscodeExe" -ArgumentList "/S" -Wait -PassThru
+# run vscode installer silently as admin (NSIS /S)
+$install = Start-Process "$vscodeExe" -ArgumentList "/S" -Verb RunAs -Wait -PassThru
 
 if ($install.ExitCode -eq 0) {
 
@@ -514,7 +489,54 @@ show-menu
 
 Clear-Host
 
+Write-Host "Downloading: Notepad++..."
+
+# paths
+$nppUrl = "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.8/npp.8.9.8.Installer.x64.exe"
+$nppExe = "$env:TEMP\npp.8.9.8.Installer.x64.exe"
+
+# download notepad++ to %temp% with curl (cloudflare blocks powershell iwr)
+$download = $false
+if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
+curl.exe --progress-bar -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" -o "$nppExe" "$nppUrl"
+if ($LASTEXITCODE -eq 0) { $download = $true }
+}
+
+# check download
+if ($download -and (Test-Path "$nppExe")) {
+
+# run notepad++ installer silently as admin (NSIS /S)
+$install = Start-Process "$nppExe" -ArgumentList "/S" -Verb RunAs -Wait -PassThru
+
+if ($install.ExitCode -eq 0) {
+
+Write-Host "Notepad++ Installed" -ForegroundColor Green
+
+} else {
+
+Write-Host "Setup Failed (Exit Code: $($install.ExitCode))" -ForegroundColor Red
+
+}
+
+} else {
+
+Remove-Item "$nppExe" -Force -ErrorAction SilentlyContinue
+Write-Host "Download Failed (curl.exe missing or link blocked)`n" -ForegroundColor Red
+
+}
+
+Remove-Item "$nppExe" -Force -ErrorAction SilentlyContinue
+
+Pause
+
+show-menu
+
+          }
+        12 {
+
+Clear-Host
+
 exit
 
           }
-        } } else { Write-Host "Invalid input. Please select a valid option (1-11)." } }
+        } } else { Write-Host "Invalid input. Please select a valid option (1-12)." } }
