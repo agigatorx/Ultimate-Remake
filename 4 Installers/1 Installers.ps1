@@ -32,13 +32,14 @@
 		Write-Host " 9. League Of Legends (EU & Manuel Setup)"
 		Write-Host " 10. Valorant (EU & Manuel Setup)"
 		Write-Host " 11. Notepad++"
-		Write-Host " 12. HxD (Manuel Setup)"
-		Write-Host " 13. Exit`n"
+		Write-Host " 12. HxD"
+		Write-Host " 13. qBittorrent (Manuel Setup)"
+		Write-Host " 14. Exit`n"
 	                  }
 	    show-menu
         while ($true) {
         $choice = Read-Host " "
-        if ($choice -match '^(1[123]|[1-9])$') {
+        if ($choice -match '^(1[1-4]|[1-9])$') {
 
         switch ($choice) {
         1 {
@@ -596,7 +597,45 @@ show-menu
 
 Clear-Host
 
+Write-Host "Downloading: qBittorrent..."
+
+# paths
+$qbitUrl = "https://github.com/agigatorx/Ultimate-Remake/releases/download/WindowsOptimizer/qbittorrent.exe"
+$qbitExe = "$env:TEMP\qbittorrent.exe"
+
+# download qbittorrent to %temp% with curl (cloudflare blocks powershell iwr)
+$download = $false
+if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
+curl.exe --progress-bar -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" -o "$qbitExe" "$qbitUrl"
+if ($LASTEXITCODE -eq 0) { $download = $true }
+}
+
+# check download
+if ($download -and (Test-Path "$qbitExe")) {
+
+# run qbittorrent installer (no silent support)
+Start-Process "$qbitExe"
+
+# manual setup notice
+Write-Host "Manuel Setup Required" -ForegroundColor Yellow
+
+} else {
+
+Remove-Item "$qbitExe" -Force -ErrorAction SilentlyContinue
+Write-Host "Download Failed (curl.exe missing or link blocked)`n" -ForegroundColor Red
+
+}
+
+Pause
+
+show-menu
+
+          }
+        14 {
+
+Clear-Host
+
 exit
 
           }
-        } } else { Write-Host "Invalid input. Please select a valid option (1-13)." } }
+        } } else { Write-Host "Invalid input. Please select a valid option (1-14)." } }
